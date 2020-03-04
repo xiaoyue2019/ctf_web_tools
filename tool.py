@@ -1,11 +1,11 @@
-import re,requests,math,base64
+import re,requests,math,base64,json
 
 class tool():
 
     def __init__(self):
         self.val=requests.Session()
 
-    def get_webs(self,url,baochi=False,ifline=False,fhgeshi='text',bmgeshi='utf8'):
+    def get_webs(self,url,headers={},baochi=False,ifline=False,fhgeshi='text',bmgeshi='utf8'):
         '''
         获取网页源码
         baochi设置是否维持session
@@ -14,14 +14,13 @@ class tool():
         fhgeshi设置是否返回字节集数据，如需要下载图片
         bmgeshi设置编码格式，默认utf8
         '''
-        headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0'
-        }
+        if headers == {}:
+            headers['User-Agent']='Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0'
         if fhgeshi=='text':
             if baochi:
                 if ifline:
                     res=[]
-                    for i in self.val.get(url).text.encode('raw_unicode_escape' ).decode(bmgeshi).split('\n'):
+                    for i in self.val.get(url).text.encode('raw_unicode_escape').decode(bmgeshi,'ignore').split('\n'):
                         #raw_unicode_escape 将含有byte格式的字符串转换成byte格式。再用utf8对其decode为文本。
                         res.append(i)
                     return res
@@ -30,12 +29,12 @@ class tool():
             else:
                 if ifline:
                     res=[]
-                    for i in requests.get(url,headers).text.encode('raw_unicode_escape' ).decode(bmgeshi).split('\n'):
+                    for i in requests.get(url,headers).text.encode('raw_unicode_escape').decode(bmgeshi,'ignore').split('\n'):
                         #raw_unicode_escape 将含有byte格式的字符串转换成byte格式。再用utf8对其decode为文本。
                         res.append(i)
                     return res
                 else:
-                    return requests.get(url,headers)
+                    return requests.get(url,headers=headers)
         elif fhgeshi=='byte':
             return requests.get(url,headers).content
 
@@ -194,8 +193,29 @@ class tool():
             res+=MorseList.get(code)
         return res
 
+    def bm_cas(self,data):
+        '''
+        凯撒密码加解密一体
+        加密：从左往右数
+        解密：从右往左数
+        因为他是回撤n个字符，就懒得再写个函数了
+        '''
+        res=[]
+        for i in range(1,26):
+            res_=''
+            for j in data:
+                if j.isalnum():
+                    if j.isupper():
+                        res_+=chr((ord(j)-65+i)%26+65)
+                    else:
+                        res_+=chr((ord(j)-97+i)%26+97)
+                else:
+                    res_+=j
+            res.append(res_)
+        return res
+
 if __name__ == "__main__":
-    # tool=tool()
+    tool=tool()
     # print(tool.bm_mors('...--/.----/..---/..-./--./.-/..-./--.','/'))
     # _=tool.bm_unic2acs(r'\u0064\u0066\u0061\u0064\u0073\u0066\u0061\u0067\u516c\u79c1\u517c\u987e','u')
     # _=tool.bm_unic2acs('&#x7F16;&#x7801;&#x89E3;&#x7801;','&#x')
@@ -209,5 +229,5 @@ if __name__ == "__main__":
     #     f.write(tool.get_webs('https://img-blog.csdnimg.cn/20190927151053287.png',True,'byte'))
     # print(tool.bm_base64_encode('dfasdfsdffasdf'))
     # print(tool.bm_base64_decode('ZGZhc2Rmc2RmZmFzZGY='))
-    pass
+    print(tool.bm_cas('azAZ'))
     

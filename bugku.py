@@ -24,3 +24,31 @@ import re
 #     }
 #     data=tool.get_post(url,'post',data,True)
 #     print(data)
+
+# url='http://123.206.87.240:8002/web3/'
+# tool=tool.tool()
+# for i in tool.get_webs(url,ifline=True):
+#     print(tool.bm_unic2acs(i))
+
+tool=tool.tool()
+# url='http://123.206.87.240:8002/web3/'
+
+# for i in tool.get_webs(url,ifline=True):
+#     print(tool.bm_unic2acs(i))
+# _=tool.bm_unic2acs('<!--&#75;&#69;&#89;&#123;&#74;&#50;&#115;&#97;&#52;&#50;&#97;&#104;&#74;&#75;&#45;&#72;&#83;&#49;&#49;&#73;&#73;&#73;&#125;-->')
+# print(_)
+
+# url='http://123.206.87.240'
+# _=tool.get_webs(url,{'Host':'flag.baidu.com'}).text
+# print(_)
+
+# url='http://123.206.87.240:8002/web12/'
+
+# for i in range(30):
+#     for j in tool.get_webs(url,ifline=True):
+#         if 'flag{' in j:
+#             print(j)
+
+_=tool.get_webs('http://123.206.87.240:8002/web3/',ifline=True)
+for i in _:
+	print(i)
