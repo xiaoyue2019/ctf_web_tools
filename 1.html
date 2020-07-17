@@ -1,0 +1,19 @@
+<?php
+error_reporting(0);
+$file=base64_decode(isset($_GET['filename'])?$_GET['filename']:"");
+$line=isset($_GET['line'])?intval($_GET['line']):0;
+if($file=='') header("location:index.php?line=&filename=a2V5cy50eHQ=");
+$file_list = array(
+'0' =>'keys.txt',
+'1' =>'index.php',
+);
+ 
+if(isset($_COOKIE['margin']) && $_COOKIE['margin']=='margin'){
+$file_list[2]='keys.php';
+}
+ 
+if(in_array($file, $file_list)){
+$fa = file($file);
+echo $fa[$line];
+}
+?>

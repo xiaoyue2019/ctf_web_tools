@@ -1,11 +1,12 @@
 import re,requests,math,base64,json
+from urllib import parse
 
 class tool():
 
     def __init__(self):
         self.val=requests.Session()
 
-    def get_webs(self,url,headers={},baochi=False,ifline=False,fhgeshi='text',bmgeshi='utf8'):
+    def get_webs(self,url,cdx=True,headers={},cookies={},baochi=False,ifline=False,fhgeshi='text',bmgeshi='utf8'):
         '''
         获取网页源码
         baochi设置是否维持session
@@ -13,6 +14,7 @@ class tool():
         .text.encode('raw_unicode_escape' ).decode(bmgeshi)
         fhgeshi设置是否返回字节集数据，如需要下载图片
         bmgeshi设置编码格式，默认utf8
+        cdx设置是否进行重定向跳转 默认跟随跳转
         '''
         if headers == {}:
             headers['User-Agent']='Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0'
@@ -20,21 +22,21 @@ class tool():
             if baochi:
                 if ifline:
                     res=[]
-                    for i in self.val.get(url).text.encode('raw_unicode_escape').decode(bmgeshi,'ignore').split('\n'):
+                    for i in self.val.get(url,headers=headers,cookies=cookies,allow_redirects=cdx).text.encode('raw_unicode_escape').decode(bmgeshi,'ignore').split('\n'):
                         #raw_unicode_escape 将含有byte格式的字符串转换成byte格式。再用utf8对其decode为文本。
                         res.append(i)
                     return res
                 else:
-                    return self.val.get(url)
+                    return self.val.get(url,headers=headers,cookies=cookies,allow_redirects=cdx)
             else:
                 if ifline:
                     res=[]
-                    for i in requests.get(url,headers).text.encode('raw_unicode_escape').decode(bmgeshi,'ignore').split('\n'):
+                    for i in requests.get(url,headers=headers,cookies=cookies,allow_redirects=cdx).text.encode('raw_unicode_escape').decode(bmgeshi,'ignore').split('\n'):
                         #raw_unicode_escape 将含有byte格式的字符串转换成byte格式。再用utf8对其decode为文本。
                         res.append(i)
                     return res
                 else:
-                    return requests.get(url,headers=headers)
+                    return requests.get(url,headers=headers,cookies=cookies,allow_redirects=cdx)
         elif fhgeshi=='byte':
             return requests.get(url,headers).content
 
@@ -214,6 +216,50 @@ class tool():
             res.append(res_)
         return res
 
+    def bm_url_decode(self,data):
+        try:
+            t=parse.unquote(data)
+        except Exception:
+            return '输出失败'
+        return t
+
+    def bm_url_encode(self,data):
+        try:
+            t=parse.quote(data)
+        except Exception:
+            return '输出失败'
+        return t
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
 if __name__ == "__main__":
     tool=tool()
     # print(tool.bm_mors('...--/.----/..---/..-./--./.-/..-./--.','/'))
